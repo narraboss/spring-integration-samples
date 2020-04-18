@@ -1,11 +1,11 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ package org.springframework.integration.samples.kafka;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
@@ -44,11 +45,11 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
-import org.springframework.kafka.listener.config.ContainerProperties;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.KafkaNull;
-import org.springframework.kafka.support.TopicPartitionInitialOffset;
+import org.springframework.kafka.support.TopicPartitionOffset;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
@@ -133,7 +134,7 @@ public class Application {
 	public KafkaMessageListenerContainer<String, String> container(
 			ConsumerFactory<String, String> kafkaConsumerFactory) {
 		return new KafkaMessageListenerContainer<>(kafkaConsumerFactory,
-				new ContainerProperties(new TopicPartitionInitialOffset(this.properties.getTopic(), 0)));
+				new ContainerProperties(new TopicPartitionOffset(this.properties.getTopic(), 0)));
 	}
 
 	@Bean
@@ -148,6 +149,20 @@ public class Application {
 	@Bean
 	public PollableChannel fromKafka() {
 		return new QueueChannel();
+	}
+
+	/*
+	 * Boot's autoconfigured KafkaAdmin will provision the topics.
+	 */
+
+	@Bean
+	public NewTopic topic(KafkaAppProperties properties) {
+		return new NewTopic(properties.getTopic(), 1, (short) 1);
+	}
+
+	@Bean
+	public NewTopic newTopic(KafkaAppProperties properties) {
+		return new NewTopic(properties.getNewTopic(), 1, (short) 1);
 	}
 
 	@Autowired

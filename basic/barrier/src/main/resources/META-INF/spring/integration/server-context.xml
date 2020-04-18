@@ -5,18 +5,22 @@
 	xmlns:int-http="http://www.springframework.org/schema/integration/http"
 	xmlns:int-amqp="http://www.springframework.org/schema/integration/amqp"
 	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
-	xsi:schemaLocation="http://www.springframework.org/schema/integration/amqp http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
-		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
-		http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http.xsd
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/amqp https://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration/file https://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/rabbit https://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+		http://www.springframework.org/schema/integration/http https://www.springframework.org/schema/integration/http/spring-integration-http.xsd
+		http://www.springframework.org/schema/integration https://www.springframework.org/schema/integration/spring-integration.xsd">
 
 	<int-http:inbound-gateway request-channel="receiveChannel"
 							path="/postGateway"
 							error-channel="errorChannel"
 							supported-methods="POST"/>
 
+	<!--
+		This one is just a dummy inbound adapter, so you call the appl from a browser with a simple GET
+		(http://localhost:8080/getGateway) to see the result. It always uses A,B,C as the request.
+	-->
 	<int-http:inbound-gateway request-channel="createPayload"
 							path="/getGateway"
 							error-channel="errorChannel"
@@ -70,7 +74,7 @@
 	<int-amqp:inbound-channel-adapter channel="nullChannel"
 		queue-names="barrier.sample.queue"
 		connection-factory="rabbitConnectionFactory" />
-	
+
 	<!-- Infrastructure -->
 
 	<rabbit:queue name="barrier.sample.queue" auto-delete="true" />

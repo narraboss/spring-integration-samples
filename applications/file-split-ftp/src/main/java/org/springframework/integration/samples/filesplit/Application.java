@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.dsl.IntegrationFlow;
@@ -33,11 +34,9 @@ import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.file.FileWritingMessageHandler;
-import org.springframework.integration.file.dsl.FileWritingMessageHandlerSpec;
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.file.splitter.FileSplitter;
-import org.springframework.integration.file.support.FileExistsMode;
 import org.springframework.integration.ftp.dsl.Ftp;
 import org.springframework.integration.ftp.session.DefaultFtpSessionFactory;
 import org.springframework.integration.http.config.EnableIntegrationGraphController;
@@ -71,7 +70,8 @@ public class Application {
 				Files.inboundAdapter(new File("/tmp/in"))
 						.preventDuplicates(false)
 						.patternFilter("*.txt"), e -> e.poller(Pollers.fixedDelay(5000)
-						.errorChannel("tfrErrors.input")))
+						.errorChannel("tfrErrors.input"))
+						.id("fileInboundChannelAdapter"))
 				.handle(Files.splitter(true, true))
 				.<Object, Class<?>>route(Object::getClass, m -> m
 						.channelMapping(FileSplitter.FileMarker.class, "markers.input")
@@ -90,11 +90,11 @@ public class Application {
 	}
 
 	@Bean
-	public FileWritingMessageHandlerSpec fileOut() {
+	public FileWritingMessageHandler fileOut() {
 		return Files.outboundAdapter("'/tmp/out'")
 				.appendNewLine(true)
 				.fileNameExpression("payload.substring(1, 4) + '.txt'")
-				.fileExistsMode(FileExistsMode.APPEND_NO_FLUSH); // files remain open for efficiency
+				.get();
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class Application {
 								.enrichHeaders(Mail.headers()
 										.subject("File successfully split and transferred")
 										.from("foo@bar")
-										.toFunction(m -> new String[]{"bar@baz"}))
+										.toFunction(m -> new String[] { "bar@baz" }))
 								.enrichHeaders(h -> h.header(EMAIL_SUCCESS_SUFFIX, ".success"))
 								.channel("toMail.input")));
 	}
@@ -176,7 +176,7 @@ public class Application {
 				.enrichHeaders(Mail.headers()
 						.subject("File split and transfer failed")
 						.from("foo@bar")
-						.toFunction(m -> new String[]{"bar@baz"}))
+						.toFunction(m -> new String[] { "bar@baz" }))
 				.enrichHeaders(h -> h.header(EMAIL_SUCCESS_SUFFIX, ".failed")
 						.headerExpression(FileHeaders.ORIGINAL_FILE, "payload.failedMessage.headers['"
 								+ FileHeaders.ORIGINAL_FILE + "']"))

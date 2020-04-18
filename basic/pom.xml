@@ -4,8 +4,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework.integration.samples</groupId>
   <artifactId>basic</artifactId>
-  <version>5.0.0.BUILD-SNAPSHOT</version>
-  <url>http://projects.spring.io/spring-integration</url>
+  <version>5.3.0.BUILD-SNAPSHOT</version>
+  <url>https://projects.spring.io/spring-integration</url>
   <organization>
     <name>SpringIO</name>
     <url>https://spring.io</url>
@@ -13,17 +13,25 @@
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
   <developers>
     <developer>
+      <id>abilan</id>
+      <name>Artem Bilan</name>
+      <email>abilan@pivotal.io</email>
+      <roles>
+        <role>project lead</role>
+      </roles>
+    </developer>
+    <developer>
       <id>garyrussell</id>
       <name>Gary Russell</name>
       <email>grussell@pivotal.io</email>
       <roles>
-        <role>project lead</role>
+        <role>lead emeritus</role>
       </roles>
     </developer>
     <developer>
@@ -38,11 +46,6 @@
       <id>ghillert</id>
       <name>Gunnar Hillert</name>
       <email>ghillert@pivotal.io</email>
-    </developer>
-    <developer>
-      <id>abilan</id>
-      <name>Artem Bilan</name>
-      <email>abilan@pivotal.io</email>
     </developer>
   </developers>
   <scm>

@@ -1,18 +1,15 @@
 buildscript {
 	repositories {
-		maven { url 'http://repo.spring.io/libs-snapshot' }
+		maven { url 'https://repo.spring.io/libs-snapshot' }
 	}
 	dependencies {
+		classpath 'io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE'
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-		configurations.classpath.resolutionStrategy.eachDependency {
-			if (it.requested.name == 'dependency-management-plugin') {
-				it.useVersion '1.0.2.RELEASE'
-			}
-		}
+		classpath "gradle.plugin.org.gretty:gretty:2.3.1"
 	}
 }
 plugins {
-	id "org.sonarqube" version "2.1"
+	id "org.sonarqube" version "2.8"
 }
 
 description = 'Spring Integration Samples'
@@ -21,7 +18,7 @@ apply plugin: 'base'
 apply plugin: 'idea'
 
 ext {
-	linkHomepage = 'http://projects.spring.io/spring-integration'
+	linkHomepage = 'https://projects.spring.io/spring-integration'
 	linkCi = 'https://build.spring.io/browse/INTSAMPLES'
 	linkIssue = 'https://jira.spring.io/browse/INTSAMPLES'
 	linkScmUrl = 'https://github.com/spring-projects/spring-integration-samples'
@@ -33,9 +30,9 @@ allprojects {
 	group = 'org.springframework.integration.samples'
 
 	repositories {
-		maven { url 'http://repo.spring.io/libs-snapshot' }
-		maven { url 'http://repo.spring.io/libs-milestone' }
-//			maven { url 'http://repo.spring.io/libs-staging-local' }
+		maven { url 'https://repo.spring.io/libs-snapshot' }
+		maven { url 'https://repo.spring.io/libs-milestone' }
+//			maven { url 'https://repo.spring.io/libs-staging-local' }
 	}
 
 }
@@ -62,7 +59,7 @@ subprojects { subproject ->
 					licenses {
 						license {
 							name 'The Apache Software License, Version 2.0'
-							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+							url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
 							distribution 'repo'
 						}
 					}
@@ -75,10 +72,16 @@ subprojects { subproject ->
 
 					developers {
 						developer {
+							id = 'abilan'
+							name = 'Artem Bilan'
+							email = 'abilan@pivotal.io'
+							roles = ["project lead"]
+						}
+						developer {
 							id = 'garyrussell'
 							name = 'Gary Russell'
 							email = 'grussell@pivotal.io'
-							roles = ["project lead"]
+							roles = ["lead emeritus"]
 						}
 						developer {
 							id = 'markfisher'
@@ -90,11 +93,6 @@ subprojects { subproject ->
 							id = 'ghillert'
 							name = 'Gunnar Hillert'
 							email = 'ghillert@pivotal.io'
-						}
-						developer {
-							id = 'abilan'
-							name = 'Artem Bilan'
-							email = 'abilan@pivotal.io'
 						}
 					}
 
@@ -121,7 +119,7 @@ subprojects { subproject ->
 						}
 					}
 				}.withXml {
-					if (subproject.plugins.hasPlugin('jetty')) {
+					if (subproject.plugins.hasPlugin('org.akhikhl.gretty')) {
 						asNode().appendNode('packaging', 'war')
 						asNode().appendNode('build')
 								.appendNode('plugins')
@@ -163,7 +161,7 @@ subprojects { subproject ->
 		apply plugin: 'io.spring.dependency-management'
 
 		jacoco {
-			toolVersion = "0.7.8"
+			toolVersion = "0.8.5"
 		}
 
 		compileJava {
@@ -172,31 +170,28 @@ subprojects { subproject ->
 		}
 
 		ext {
-			activeMqVersion = '5.13.4'
-			apacheSshdVersion = '1.4.0'
-			aspectjVersion = '1.8.9'
+			activeMqVersion = '5.15.11'
+			apacheSshdVersion = '2.4.0'
+			aspectjVersion = '1.9.5'
 			commonsDigesterVersion = '2.0'
 			commonsDbcpVersion = '1.2.2'
-			commonsFileUploadVersion = '1.2.2'
-			commonsIoVersion = '2.4'
+			commonsFileUploadVersion = '1.4'
+			commonsIoVersion = '2.6'
 			commonsLangVersion = '2.6'
 			commonsPoolVersion = '1.5.4'
 			c3p0Version = '0.9.1.2'
-			derbyVersion = '10.10.1.1'
-			eclipseLinkVersion = '2.6.4'
+			derbyVersion = '10.14.2.0'
 			hamcrestVersion = '1.3'
-			hibernateVersion = '5.2.10.Final'
-			hibernateValidatorVersion = '5.4.1.Final'
-			ftpServerVersion = '1.1.0'
+			hibernateVersion = '5.4.11.Final'
+			hibernateValidatorVersion = '6.1.2.Final'
+			ftpServerVersion = '1.1.1'
 			flexjsonVersion = '2.0'
-			guavaVersion = '16.0.1'
-			groovyVersion = '2.3.0'
-			hsqldbVersion = '2.3.2'
-			h2Version = '1.4.194'
-			jacksonVersion = '2.3.2'
-			jasyptVersion = '1.7'
+			groovyVersion = '2.5.8'
+			hsqldbVersion = '2.5.0'
+			h2Version = '1.4.200'
+			jacksonVersion = '2.10.3'
 			javaxInjectVersion = '1'
-			javaxMailVersion = '1.5.5'
+			javaxMailVersion = '1.6.2'
 			jodaTimeVersion = '1.6'
 			jtaVersion = '1.1'
 			jtdsVersion = '1.2.6'
@@ -206,21 +201,25 @@ subprojects { subproject ->
 			jpaApiVersion = '2.0.0'
 			jstlVersion = '1.2'
 			junitVersion = '4.12'
-			jythonVersion = '2.5.3'
-			log4jVersion = '1.2.17'
-			mockitoVersion = '1.10.19'
+			jythonVersion = '2.7.0'
+			log4jVersion = '2.12.1'
+			mockitoVersion = '3.2.4'
+			mongoDriverVersion = '4.0.1'
 			openJpaVersion = '2.4.0'
 			oracleDriverVersion = '11.2.0.3'
-			postgresVersion = '9.1-901-1.jdbc4'
+			postgresVersion = '42.2.9'
 			subethasmtpVersion = '1.2'
-			slf4jVersion = '1.7.11'
-			springIntegrationVersion = '5.0.0.BUILD-SNAPSHOT'
-			springIntegrationKafkaVersion = '3.0.0.M1'
-			springIntegrationSplunkVersion = '1.1.0.RELEASE'
-			springKafkaVersion = '2.0.0.M2'
-			springVersion = '5.0.0.RC1'
-			springSecurityVersion = '4.2.2.RELEASE'
+			slf4jVersion = '1.7.25'
+			springCloudVersion ='Hoxton.SR3'
+			springIntegrationVersion = '5.3.0.BUILD-SNAPSHOT'
+			springIntegrationKafkaVersion = '3.3.0.BUILD-SNAPSHOT'
+			springIntegrationSocialTwiterVersion = '1.0.1.BUILD-SNAPSHOT'
+			springIntegrationSplunkVersion = '1.2.0.BUILD-SNAPSHOT'
+			springKafkaVersion = '2.5.0.BUILD-SNAPSHOT'
+			springVersion = '5.2.5.RELEASE'
+			springSecurityVersion = '5.3.1.RELEASE'
 			springWebFlowVersion = '2.3.3.RELEASE'
+			testcontainersVersion = '1.13.0'
 			tilesJspVersion = '2.2.1'
 			validationApiVersion = '1.0.0.GA'
 		}
@@ -233,6 +232,7 @@ subprojects { subproject ->
 			imports {
 				mavenBom "org.springframework.integration:spring-integration-bom:$springIntegrationVersion"
 				mavenBom "org.springframework:spring-framework-bom:$springVersion"
+				mavenBom "com.fasterxml.jackson:jackson-bom:$jacksonVersion"
 			}
 		}
 
@@ -248,15 +248,19 @@ subprojects { subproject ->
 			testCompile "org.springframework:spring-test"
 		}
 
+		configurations {
+			all*.exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-kotlin'
+		}
+
 		// enable all compiler warnings; individual projects may customize further
-		ext.xLintArg = '-Xlint:all,-options'
+		ext.xLintArg = '-Xlint:all,-options,-processing'
 		[compileJava, compileTestJava]*.options*.compilerArgs = [xLintArg]
 
 		jacocoTestReport {
 			reports {
 				xml.enabled false
 				csv.enabled false
-				html.destination "${buildDir}/reports/jacoco/html"
+				html.destination file("${buildDir}/reports/jacoco/html")
 			}
 		}
 
@@ -264,33 +268,10 @@ subprojects { subproject ->
 			// suppress all console output during testing unless running `gradle -i`
 			logging.captureStandardOutput(LogLevel.INFO)
 			jacoco {
-				append = false
 				destinationFile = file("$buildDir/jacoco.exec")
 			}
 		}
 
-		task checkTestConfigs {
-			doLast {
-				def configFiles = []
-				sourceSets.test.allSource.srcDirs.each {
-					fileTree(it).include('**/*.xml').exclude('**/log4j.xml').each { configFile ->
-						def configXml = new XmlParser(false, false).parse(configFile)
-
-						if (configXml.@'xsi:schemaLocation' ==~ /.*spring-[a-z-]*\d\.\d\.xsd.*/) {
-							configFiles << configFile
-						}
-					}
-				}
-				if (configFiles) {
-					throw new InvalidUserDataException('Hardcoded XSD version in the config files:\n' +
-							configFiles.collect { relativePath(it) }.join('\n') +
-							'\nPlease, use versionless schemaLocations for Spring XSDs to avoid issues with builds ' +
-							'on different versions of dependencies.')
-				}
-			}
-		}
-
-		test.dependsOn checkTestConfigs
 		build.dependsOn jacocoTestReport
 	}
 
@@ -308,7 +289,7 @@ project('advanced-testing-examples') {
 		compile "javax.jms:javax.jms-api:$jmsApiVersion"
 		compile "org.springframework.integration:spring-integration-jms"
 		compile "org.springframework.integration:spring-integration-groovy"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -317,7 +298,7 @@ project('dynamic-ftp') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-ftp"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -330,8 +311,8 @@ project('cafe-si') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-stream"
-		compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile 'com.fasterxml.jackson.core:jackson-databind'
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -341,7 +322,7 @@ project('cafe-amqp') {
 	dependencies {
 		compile project(":cafe-si")
 		compile "org.springframework.integration:spring-integration-amqp"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -356,7 +337,7 @@ project('cafe-jms') {
 		}
 		compile "org.springframework.integration:spring-integration-jms"
 		compile "javax.jms:javax.jms-api:$jmsApiVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -371,7 +352,7 @@ project('cafe-scripted') {
 		compile "org.jruby:jruby:$jrubyVersion"
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	task runCafeDemoApp(type: JavaExec) {
@@ -395,7 +376,7 @@ project('loan-broker') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-ip"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	task runLoanBrokerSharkDetectorDemo(type: JavaExec) {
@@ -408,7 +389,8 @@ project('loan-broker') {
 project('loanshark') {
 	description = 'Loan Shark Sample'
 
-	apply plugin: 'jetty'
+	apply plugin: 'war'
+	apply plugin: "org.gretty"
 	apply plugin: 'eclipse-wtp'
 
 	dependencies {
@@ -437,7 +419,7 @@ project('loanshark') {
 		compile "org.springframework.webflow:spring-js:$springWebFlowVersion"
 		compile "org.slf4j:slf4j-api:$slf4jVersion"
 
-		runtime "log4j:log4j:$log4jVersion"
+		runtime "org.apache.logging.log4j:log4j-core:$log4jVersion"
 		runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
 		runtime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
 	}
@@ -450,7 +432,8 @@ project('amqp') {
 	dependencies {
 		compile "org.springframework.integration:spring-integration-stream"
 		compile "org.springframework.integration:spring-integration-amqp"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+		runtime "org.slf4j:slf4j-jcl:$slf4jVersion"
 	}
 
 	task runSimple(type: JavaExec) {
@@ -503,7 +486,7 @@ project('control-bus') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -517,7 +500,7 @@ project('enricher') {
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
 		compile "com.h2database:h2:$h2Version"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -526,7 +509,7 @@ project('feed') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-feed"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -535,7 +518,7 @@ project('file') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-file"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -550,7 +533,7 @@ project('ftp') {
 
 		runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
 
-		testCompile "log4j:log4j:$log4jVersion"
+		testCompile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 		testCompile "org.springframework.integration:spring-integration-test"
 	}
 
@@ -564,7 +547,7 @@ project('helloworld') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	task runHelloWorldApp(type: JavaExec) {
@@ -582,8 +565,9 @@ project('helloworld') {
 project('http') {
 	description = 'HTTP Sample'
 
+	apply plugin: 'war'
 	apply plugin: 'application'
-	apply plugin: 'jetty'
+	apply plugin: "org.gretty"
 	apply plugin: 'eclipse-wtp'
 
 	mainClassName = 'org.springframework.integration.samples.http.HttpClientDemo'
@@ -596,7 +580,7 @@ project('http') {
 		compile "commons-io:commons-io:$commonsIoVersion"
 		compile "javax.mail:javax.mail-api:$javaxMailVersion"
 		compile "com.sun.mail:javax.mail:$javaxMailVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 }
@@ -636,7 +620,7 @@ project('kafka') {
 		compile "org.springframework.integration:spring-integration-core"
 		compile "org.springframework.kafka:spring-kafka:$springKafkaVersion"
 
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
@@ -660,6 +644,8 @@ project('mqtt') {
 		compile 'org.springframework.boot:spring-boot-starter-integration'
 		compile "org.springframework.integration:spring-integration-stream"
 		compile "org.springframework.integration:spring-integration-mqtt"
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testCompile "org.springframework.integration:spring-integration-test"
 	}
 
 	bootRun {
@@ -686,7 +672,7 @@ project('si4demo') {
 		compile 'org.springframework.boot:spring-boot-starter-web'
 		compile 'org.springframework.boot:spring-boot-starter-integration'
 		compile "org.springframework.integration:spring-integration-mail"
-		compile "org.springframework.integration:spring-integration-twitter"
+		compile "org.springframework.integration:spring-integration-social-twitter:$springIntegrationSocialTwiterVersion"
 		compile "org.springframework.integration:spring-integration-http"
 		compile "org.springframework.integration:spring-integration-ip"
 		compile "javax.mail:javax.mail-api:$javaxMailVersion"
@@ -714,17 +700,12 @@ project('cafe-dsl') {
 		compile project(":cafe-si")
 		compile 'org.springframework.boot:spring-boot-starter-integration'
 		compile "org.springframework.integration:spring-integration-core"
-		compile "com.google.guava:guava:$guavaVersion"
 
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
+
 	bootRun {
 		main = 'org.springframework.integration.samples.dsl.cafe.lambda.Application'
-	}
-
-	task run(type: JavaExec) {
-		main 'org.springframework.integration.samples.dsl.cafe.nonlambda.Application'
-		classpath = sourceSets.main.runtimeClasspath
 	}
 
 	tasks.withType(JavaExec) {
@@ -743,7 +724,7 @@ project('jdbc') {
 	dependencies {
 		compile "org.springframework.integration:spring-integration-jdbc"
 		compile "com.h2database:h2:$h2Version"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -762,7 +743,7 @@ project('jms') {
 		compile("org.apache.activemq:activemq-kahadb-store:$activeMqVersion") {
 			exclude group: "org.springframework"
 		}
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
 		testCompile "org.springframework.integration:spring-integration-test"
 	}
@@ -774,17 +755,17 @@ project('jmx') {
 	dependencies {
 		compile "org.springframework.integration:spring-integration-jmx"
 		compile "org.springframework.integration:spring-integration-stream"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
 project('jpa') {
 	description = 'JPA Basic Sample'
 
-//	apply plugin: 'application'
+	apply plugin: 'application'
 	apply plugin: 'org.springframework.boot'
 
-//	mainClassName = 'org.springframework.integration.samples.jpa.Main'
+	mainClassName = 'org.springframework.integration.samples.jpa.Main'
 
 	dependencies {
 		compile 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -793,22 +774,12 @@ project('jpa') {
 
 		runtime "org.springframework:spring-instrument"
 		runtime "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$jpa21ApiVersion"
-		runtime "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipseLinkVersion"
 
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 
-	//Suppress openjpa annotation processor warnings
-	compileTestJava.options.compilerArgs = ["${xLintArg},-processing"]
-
-/*	bootRun {
-		main = 'org.springframework.integration.samples.jpa.Main'
-	}*/
 	tasks.withType(JavaExec) {
 		standardInput = System.in
-		jvmArgs classpath.files.findAll {
-			it.name ==~ /(spring-instrument.+)/}.collect{"-javaagent:$it"
-		}
 	}
 
 }
@@ -821,7 +792,7 @@ project('mail') {
 		compile "org.springframework:spring-context"
 		compile "javax.mail:javax.mail-api:$javaxMailVersion"
 		compile "com.sun.mail:javax.mail:$javaxMailVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	task runGmailInboundPop3AdapterTestApp(type: JavaExec) {
@@ -840,7 +811,8 @@ project('mongodb') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-mongodb"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+		compile "org.mongodb:mongodb-driver-sync:$mongoDriverVersion"
 	}
 
 	task runMongoDbInboundAdapterDemo(type: JavaExec) {
@@ -859,7 +831,7 @@ project('oddeven') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	task runCronOddEvenDemo(type: JavaExec) {
@@ -878,7 +850,7 @@ project('quote') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-stream"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -887,8 +859,8 @@ project('sftp') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-sftp"
-		compile "org.apache.sshd:sshd-core:$apacheSshdVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+		testCompile "org.apache.sshd:sshd-sftp:$apacheSshdVersion"
 	}
 }
 
@@ -904,8 +876,31 @@ project('tcp-amqp') {
 		compile "org.springframework.integration:spring-integration-ip"
 		compile "org.slf4j:slf4j-api:$slf4jVersion"
 
-		runtime "log4j:log4j:$log4jVersion"
+		runtime "org.apache.logging.log4j:log4j-core:$log4jVersion"
 		runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
+	}
+}
+
+project('tcp-broadcast') {
+	description = 'TCP Client Broadcast Sample'
+
+	apply plugin: 'org.springframework.boot'
+
+	dependencies {
+		compile 'org.springframework.boot:spring-boot-starter-web'
+		compile 'org.springframework.boot:spring-boot-starter-integration'
+		compile "org.springframework.integration:spring-integration-ip"
+
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+
+	bootRun {
+		main = 'org.springframework.integration.samples.tcpbroadcast.TcpBroadcastApplication'
+	}
+
+	task run(type: JavaExec) {
+		main 'org.springframework.integration.samples.tcpbroadcast.TcpBroadcastApplication'
+		classpath = sourceSets.main.runtimeClasspath
 	}
 }
 
@@ -920,8 +915,46 @@ project('tcp-client-server') {
 		compile "org.springframework.integration:spring-integration-ip"
 		compile "commons-lang:commons-lang:$commonsLangVersion"
 		compile "org.springframework.integration:spring-integration-test"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
+}
+
+project('testcontainers-rabbitmq') {
+	description = 'Testcontainers RabbitMQ Sample'
+
+	apply plugin: 'org.springframework.boot'
+
+	bootRun {
+		main = 'org.springframework.integration.samples.testcontainersrabbitmq.TestcontainersRabbitmqApplication'
+	}
+
+	dependencies {
+		compile "org.springframework.boot:spring-boot-starter-integration"
+		compile "org.springframework.integration:spring-integration-amqp"
+		compile "org.springframework.boot:spring-boot-starter-json"
+
+		testCompile('org.springframework.boot:spring-boot-starter-test') {
+			exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+		}
+		testCompile 'org.springframework.integration:spring-integration-test'
+		testCompile 'org.springframework.amqp:spring-rabbit-test'
+		testCompile 'org.springframework.cloud:spring-cloud-starter'
+
+		testCompile "org.testcontainers:junit-jupiter:$testcontainersVersion"
+		testCompile "com.playtika.testcontainers:embedded-rabbitmq:1.42"
+
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+		}
+	}
+
+	test {
+		useJUnitPlatform()
+	}
+
 }
 
 project('testing-examples') {
@@ -936,7 +969,7 @@ project('testing-examples') {
 		compile "org.springframework.integration:spring-integration-http"
 		compile "org.springframework.integration:spring-integration-ws"
 		compile "org.springframework:spring-webmvc"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
 		testCompile "org.springframework.integration:spring-integration-test"
 	}
@@ -946,8 +979,8 @@ project('twitter') {
 	description = 'Twitter Basic Sample'
 
 	dependencies {
-		compile "org.springframework.integration:spring-integration-twitter"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.springframework.integration:spring-integration-social-twitter:$springIntegrationSocialTwiterVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	test {
@@ -958,14 +991,15 @@ project('twitter') {
 project('ws-inbound-gateway') {
 	description = 'WS Inbound Gateway Sample'
 
-	apply plugin: 'jetty'
+	apply plugin: 'war'
+	apply plugin: "org.gretty"
 	apply plugin: 'eclipse-wtp'
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-xml"
 		compile "org.springframework.integration:spring-integration-ws"
 		compile "org.springframework:spring-webmvc"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	test {
@@ -984,7 +1018,7 @@ project('ws-outbound-gateway') {
 		compile "org.springframework.integration:spring-integration-stream"
 		compile "org.springframework.integration:spring-integration-ws"
 //		compile 'com.sun.xml.messaging.saaj:saaj-impl:1.3.19'
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -997,7 +1031,7 @@ project('xml') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-xml"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1006,7 +1040,7 @@ project('xmpp') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-xmpp"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	test {
@@ -1019,7 +1053,7 @@ project('async-gateway') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1032,7 +1066,7 @@ project('dynamic-poller') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1041,7 +1075,7 @@ project('errorhandling') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-stream"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1050,7 +1084,7 @@ project('file-processing') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-file"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1067,7 +1101,7 @@ project('mail-attachments') {
 		compile "javax.mail:javax.mail-api:$javaxMailVersion"
 		compile "com.sun.mail:javax.mail:$javaxMailVersion"
 		compile "commons-io:commons-io:$commonsIoVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
 		testCompile "org.springframework.integration:spring-integration-test"
 		testCompile "org.subethamail:subethasmtp-wiser:$subethasmtpVersion"
@@ -1078,7 +1112,8 @@ project('mail-attachments') {
 project('monitoring') {
 	description = 'Monitoring Application'
 
-	apply plugin: 'jetty'
+	apply plugin: 'war'
+	apply plugin: "org.gretty"
 	apply plugin: 'application'
 	apply plugin: 'eclipse-wtp'
 
@@ -1086,34 +1121,36 @@ project('monitoring') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-jmx"
-		compile "org.springframework.integration:spring-integration-twitter"
+		compile "org.springframework.integration:spring-integration-social-twitter:$springIntegrationSocialTwiterVersion"
 		compile "org.springframework.integration:spring-integration-groovy"
 		compile "org.springframework:spring-webmvc"
 		compile "javax.servlet:jstl:$jstlVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
 project('multipart-http') {
 	description = 'HTTP Multipart Demo'
 
-	apply plugin: 'jetty'
+	apply plugin: 'war'
+	apply plugin: "org.gretty"
 	apply plugin: 'eclipse-wtp'
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-http"
 		compile "org.springframework:spring-webmvc"
-		compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+		compile 'com.fasterxml.jackson.core:jackson-databind'
 		compile "commons-fileupload:commons-fileupload:$commonsFileUploadVersion"
 		compile "commons-io:commons-io:$commonsIoVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
 project('rest-http') {
 	description = 'Spring Integration Rest HTTP Path Usage Demo'
 
-	apply plugin: 'jetty'
+	apply plugin: 'war'
+	apply plugin: "org.gretty"
 	apply plugin: 'eclipse-wtp'
 
 	dependencies {
@@ -1124,11 +1161,10 @@ project('rest-http') {
 		compile "org.springframework:spring-jdbc"
 		compile "org.springframework:spring-context"
 		compile "org.springframework:spring-aop"
-		compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+		compile 'com.fasterxml.jackson.core:jackson-databind'
 		compile "org.springframework.security:spring-security-web:$springSecurityVersion"
 		compile "org.springframework.security:spring-security-config:$springSecurityVersion"
-		compile "org.jasypt:jasypt:$jasyptVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	test {
@@ -1149,7 +1185,7 @@ project('retry-and-more') {
 			exclude group: 'org.hamcrest'
 		}
 		compile "org.hamcrest:hamcrest-all:$hamcrestVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	task runCircuitBreakerDemo(type: JavaExec) {
@@ -1188,7 +1224,7 @@ project('splitter-aggregator-reaper') {
 	dependencies {
 		compile "org.springframework.integration:spring-integration-core"
 		compile "javax.inject:javax.inject:$javaxInjectVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1203,7 +1239,7 @@ project('stored-procedures-derby') {
 	dependencies {
 		compile "org.springframework.integration:spring-integration-jdbc"
 		compile "org.apache.derby:derby:$derbyVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1222,7 +1258,7 @@ project('stored-procedures-oracle') {
 		compile "org.springframework.integration:spring-integration-jdbc"
 //TODO Uncomment it when the ojdbc6 artifact is available in the mavenLocal()
 //		compile "com.oracle:ojdbc6:$oracleDriverVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	test {
@@ -1241,7 +1277,7 @@ project('stored-procedures-ms') {
 		compile "org.springframework.integration:spring-integration-jdbc"
 		compile "net.sourceforge.jtds:jtds:$jtdsVersion"
 		compile "c3p0:c3p0:$c3p0Version"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 
 	test {
@@ -1258,10 +1294,10 @@ project('stored-procedures-postgresql') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-jdbc"
-		compile "postgresql:postgresql:$postgresVersion"
+		compile "org.postgresql:postgresql:$postgresVersion"
 		compile "commons-dbcp:commons-dbcp:$commonsDbcpVersion"
 		compile "commons-pool:commons-pool:$commonsPoolVersion"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1270,7 +1306,7 @@ project('tcp-client-server-multiplex') {
 
 	dependencies {
 		compile "org.springframework.integration:spring-integration-ip"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
 		testCompile "org.springframework.integration:spring-integration-test"
 	}
@@ -1287,7 +1323,7 @@ project('travel') {
 		compile "org.springframework.integration:spring-integration-ws"
 		compile "org.springframework.integration:spring-integration-http"
 		compile "org.springframework:spring-web"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1302,7 +1338,7 @@ project('tx-synch') {
 		compile "org.springframework.integration:spring-integration-jdbc"
 		compile "org.springframework.integration:spring-integration-file"
 		compile "com.h2database:h2:$h2Version"
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 	}
 }
 
@@ -1359,7 +1395,7 @@ project('kafka-dsl') {
 		compile 'org.springframework.boot:spring-boot-starter-integration'
 		compile "org.springframework.integration:spring-integration-core"
 		compile ("org.springframework.integration:spring-integration-kafka:$springIntegrationKafkaVersion")
-		compile "log4j:log4j:$log4jVersion"
+		compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 	bootRun {
@@ -1426,6 +1462,30 @@ project('dynamic-tcp-client') {
 	}
 }
 
+project('tcp-with-headers') {
+	description = 'TCP Send/Receive with headers'
+
+	apply plugin: 'org.springframework.boot'
+
+	dependencies {
+		compile 'org.springframework.boot:spring-boot-starter-integration'
+		compile "org.springframework.integration:spring-integration-ip"
+		compile 'com.fasterxml.jackson.core:jackson-databind'
+
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+
+	bootRun {
+		main = 'org.springframework.integration.samples.tcpheaders.TcpWithHeadersApplication'
+		standardInput = System.in
+	}
+
+	task run(type: JavaExec) {
+		main 'org.springframework.integration.samples.tcpheaders.TcpWithHeadersApplication'
+		classpath = sourceSets.main.runtimeClasspath
+		standardInput = System.in
+	}
+}
 
 sonarqube {
 	properties {

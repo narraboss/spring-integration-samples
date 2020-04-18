@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,8 +36,6 @@ import org.springframework.integration.samples.cafe.Order;
 import org.springframework.integration.samples.cafe.OrderItem;
 import org.springframework.integration.scheduling.PollerMetadata;
 import org.springframework.integration.stream.CharacterStreamWritingMessageHandler;
-
-import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
  * @author Artem Bilan
@@ -88,24 +86,27 @@ public class Application {
 						.subFlowMapping(true, sf -> sf
 								.channel(c -> c.queue(10))
 								.publishSubscribeChannel(c -> c
-										.subscribe(s -> s.handle(m -> Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS)))
+										.subscribe(s -> s.handle(m -> sleepUninterruptibly(1, TimeUnit.SECONDS)))
 										.subscribe(sub -> sub
 												.<OrderItem, String>transform(p ->
-														Thread.currentThread().getName()
-																+ " prepared cold drink #" + this.coldDrinkCounter.incrementAndGet()
-																+ " for order #" + p.getOrderNumber() + ": " + p)
-												.handle(m -> System.out.println(m.getPayload())))))
+														Thread.currentThread().getName() +
+																" prepared cold drink #" +
+																this.coldDrinkCounter.incrementAndGet() +
+																" for order #" + p.getOrderNumber() + ": " + p)
+												.handle(m -> System.out.println(m.getPayload()))))
+								.bridge())
 						.subFlowMapping(false, sf -> sf
 								.channel(c -> c.queue(10))
 								.publishSubscribeChannel(c -> c
-										.subscribe(s -> s.handle(m -> Uninterruptibles.sleepUninterruptibly(5, TimeUnit.SECONDS)))
+										.subscribe(s -> s.handle(m -> sleepUninterruptibly(5, TimeUnit.SECONDS)))
 										.subscribe(sub -> sub
 												.<OrderItem, String>transform(p ->
-														Thread.currentThread().getName()
-																+ " prepared hot drink #" + this.hotDrinkCounter.incrementAndGet()
-																+ " for order #" + p.getOrderNumber() + ": " + p)
-												.handle(m -> System.out.println(m.getPayload())))))
-						.defaultOutputToParentFlow())
+														Thread.currentThread().getName() +
+																" prepared hot drink #" +
+																this.hotDrinkCounter.incrementAndGet() +
+																" for order #" + p.getOrderNumber() + ": " + p)
+												.handle(m -> System.out.println(m.getPayload()))))
+								.bridge()))
 				.<OrderItem, Drink>transform(orderItem ->
 						new Drink(orderItem.getOrderNumber(),
 								orderItem.getDrinkType(),
@@ -119,6 +120,21 @@ public class Application {
 										.collect(Collectors.toList())))
 						.correlationStrategy(m -> ((Drink) m.getPayload()).getOrderNumber()))
 				.handle(CharacterStreamWritingMessageHandler.stdout());
+	}
+
+	private static void sleepUninterruptibly(long sleepFor, TimeUnit unit) {
+		boolean interrupted = false;
+		try {
+			unit.sleep(sleepFor);
+		}
+		catch (InterruptedException e) {
+			interrupted = true;
+		}
+		finally {
+			if (interrupted) {
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 
 }
